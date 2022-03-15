@@ -1,13 +1,3 @@
-"Flipperlovania"
-
-This fork of the Flipper Zero firmware features a recreation/remix of "Megalovania" from the video game "UNDERTALE" developed and composed by Toby Fox.
-
-Remixed by Simsnet#1754 using Notepad++ and FL Studio.
-
-Original music player code is believed to be created by [Skotopes](https://github.com/skotopes), which featured a remix of the song "Marble Machine" composed by Wintergatan.
-
-***
-
 # Flipper Zero Firmware
 
 [![Discord](https://img.shields.io/discord/740930220399525928.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](http://flipperzero.one/discord)
