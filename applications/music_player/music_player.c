@@ -4,35 +4,39 @@
 #include <gui/gui.h>
 #include <input/input.h>
 
+// "Flipperlovania"
+// A remix of "Megalovania" from the video game "UNDERTALE" developed and composed by Toby Fox.
+// Remixed by Simsnet#1754 using Notepad++ and FL Studio.
+// Original music player code is believed to be created by https://github.com/skotopes, which featured a remix of the song "Marble Machine" composed by Wintergatan.
+
 // TODO float note freq
 typedef enum {
     // Delay
     N = 0,
     // Octave 4
+	A_4 = 466,
     B4 = 494,
     // Octave 5
     C5 = 523,
     D5 = 587,
-    E5 = 659,
+	E5 = 659,
+	F5 = 698,
     F_5 = 740,
     G5 = 784,
+	G_5 = 831,
     A5 = 880,
-    B5 = 988,
+	B5 = 988,
     // Octave 6
-    C6 = 1046,
+	C6 = 1047,
     D6 = 1175,
-    E6 = 1319,
+	E6 = 1319,
 } MelodyEventNote;
 
 typedef enum {
-    L1 = 1,
-    L2 = 2,
     L4 = 4,
     L8 = 8,
     L16 = 16,
-    L32 = 32,
-    L64 = 64,
-    L128 = 128,
+	L128 = 128,
 } MelodyEventLength;
 
 typedef struct {
@@ -46,22 +50,74 @@ typedef struct {
 } SongPattern;
 
 const MelodyEventRecord melody_start[] = {
-    {E6, L8}, {N, L8},   {E5, L8}, {B5, L8},  {N, L4},  {E5, L8},  {A5, L8},  {G5, L8}, {A5, L8},
-    {E5, L8}, {B5, L8},  {N, L8},  {G5, L8},  {A5, L8}, {D6, L8},  {N, L4},   {D5, L8}, {B5, L8},
-    {N, L4},  {D5, L8},  {A5, L8}, {G5, L8},  {A5, L8}, {D5, L8},  {F_5, L8}, {N, L8},  {G5, L8},
-    {A5, L8}, {D6, L8},  {N, L4},  {F_5, L8}, {B5, L8}, {N, L4},   {F_5, L8}, {D6, L8}, {C6, L8},
-    {B5, L8}, {F_5, L8}, {A5, L8}, {N, L8},   {G5, L8}, {F_5, L8}, {E5, L8},  {N, L8},  {C5, L8},
-    {E5, L8}, {B5, L8},  {B4, L8}, {C5, L8},  {D5, L8}, {D6, L8},  {C6, L8},  {B5, L8}, {F_5, L8},
-    {A5, L8}, {N, L8},   {G5, L8}, {A5, L8},  {E6, L8}};
+	// section 1-1
+    {D5, L16}, {D5, L16}, {D6, L16}, {N, L16},
+	// section 1-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 1-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 1-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16},
+	// section 2-1
+    {C5, L16}, {C5, L16}, {D6, L16}, {N, L16},
+	// section 2-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 2-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 2-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16},
+	// section 3-1
+    {B4, L16}, {B4, L16}, {D6, L16}, {N, L16},
+	// section 3-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 3-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 3-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16},
+	// section 4-1
+    {A_4, L16}, {A_4, L16}, {D6, L16}, {N, L16},
+	// section 4-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 4-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 4-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16}
+};	
 
 const MelodyEventRecord melody_loop[] = {
-    {N, L4},   {E5, L8}, {B5, L8},  {N, L4},  {E5, L8},  {A5, L8},  {G5, L8}, {A5, L8},  {E5, L8},
-    {B5, L8},  {N, L8},  {G5, L8},  {A5, L8}, {D6, L8},  {N, L4},   {D5, L8}, {B5, L8},  {N, L4},
-    {D5, L8},  {A5, L8}, {G5, L8},  {A5, L8}, {D5, L8},  {F_5, L8}, {N, L8},  {G5, L8},  {A5, L8},
-    {D6, L8},  {N, L4},  {F_5, L8}, {B5, L8}, {N, L4},   {F_5, L8}, {D6, L8}, {C6, L8},  {B5, L8},
-    {F_5, L8}, {A5, L8}, {N, L8},   {G5, L8}, {F_5, L8}, {E5, L8},  {N, L8},  {C5, L8},  {E5, L8},
-    {B5, L8},  {B4, L8}, {C5, L8},  {D5, L8}, {D6, L8},  {C6, L8},  {B5, L8}, {F_5, L8}, {A5, L8},
-    {N, L8},   {G5, L8}, {A5, L8},  {E6, L8}};
+	// section 1-1
+    {D5, L16}, {D5, L16}, {D6, L16}, {N, L16},
+	// section 1-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 1-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 1-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16},
+	// section 2-1
+    {C5, L16}, {C5, L16}, {D6, L16}, {N, L16},
+	// section 2-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 2-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 2-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16},
+	// section 3-1
+    {B4, L16}, {B4, L16}, {D6, L16}, {N, L16},
+	// section 3-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 3-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 3-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16},
+	// section 4-1
+    {A_4, L16}, {A_4, L16}, {D6, L16}, {N, L16},
+	// section 4-2
+	{A5, L16}, {N, L8}, {G_5, L16},
+	// section 4-3
+	{N, L16}, {G5, L16}, {N, L16}, {F5, L16},
+	// section 4-4
+	{N, L16}, {D5, L16}, {F5, L16}, {G5, L16}
+};	
 
 const MelodyEventRecord melody_chords_1bar[] = {
     {E6, L8},   {N, L8},    {B4, L128}, {E5, L128}, {B4, L128}, {E5, L128}, {B4, L128}, {E5, L128},
@@ -109,24 +165,44 @@ bool is_white_note(const MelodyEventRecord* note_record, uint8_t id) {
 
     switch(note_record->note) {
     case C5:
+		if(id == 0) return true;
+        break;
     case C6:
         if(id == 0) return true;
         break;
     case D5:
+		if(id == 1) return true;
+        break;
     case D6:
         if(id == 1) return true;
         break;
     case E5:
+		if(id == 2) return true;
+        break;
     case E6:
         if(id == 2) return true;
         break;
+    case F5:
+        if(id == 3) return true;
+        break;
+    case F_5:
+        if(id == 9) return true;
+        break;
     case G5:
         if(id == 4) return true;
+        break;
+    case G_5:
+        if(id == 10) return true;
+        break;
+    case A_4:
+        if(id == 12) return true;
         break;
     case A5:
         if(id == 5) return true;
         break;
     case B4:
+		if(id == 6) return true;
+        break;
     case B5:
         if(id == 6) return true;
         break;
@@ -158,6 +234,9 @@ const char* get_note_name(const MelodyEventRecord* note_record) {
     case N:
         return "---";
         break;
+    case A_4:
+        return "A#4-";
+        break;
     case B4:
         return "B4-";
         break;
@@ -170,17 +249,20 @@ const char* get_note_name(const MelodyEventRecord* note_record) {
     case E5:
         return "E5-";
         break;
+    case F5:
+        return "F5";
+        break;
     case F_5:
         return "F#5";
         break;
     case G5:
         return "G5-";
         break;
+    case G_5:
+        return "G#5-";
+        break;
     case A5:
         return "A5-";
-        break;
-    case B5:
-        return "B5-";
         break;
     case C6:
         return "C6-";
@@ -200,12 +282,6 @@ const char* get_note_len_name(const MelodyEventRecord* note_record) {
     if(note_record == NULL) return "";
 
     switch(note_record->length) {
-    case L1:
-        return "1-";
-        break;
-    case L2:
-        return "2-";
-        break;
     case L4:
         return "4-";
         break;
@@ -215,16 +291,10 @@ const char* get_note_len_name(const MelodyEventRecord* note_record) {
     case L16:
         return "16";
         break;
-    case L32:
-        return "32";
-        break;
-    case L64:
-        return "64";
-        break;
-    case L128:
+	case L128:
         return "1+";
         break;
-    default:
+	default:
         return "--";
         break;
     }
@@ -236,7 +306,7 @@ static void render_callback(Canvas* canvas, void* ctx) {
     canvas_clear(canvas);
     canvas_set_color(canvas, ColorBlack);
     canvas_set_font(canvas, FontPrimary);
-    canvas_draw_str(canvas, 0, 12, "MusicPlayer");
+    canvas_draw_str(canvas, 0, 12, "Flipperlovania");
 
     uint8_t x_pos = 0;
     uint8_t y_pos = 24;
